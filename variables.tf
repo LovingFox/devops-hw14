@@ -32,6 +32,18 @@ variable "keyFile" {
    default = "./devops-hw14-builder.key"
 }
 
+variable "dataFile" {
+   default = "./devops-hw14-builder.yml"
+}
+
+variable "gitRepo" {
+   default = "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
+}
+
+variable "workingDir" {
+   default = "repo"
+}
+
 variable "securityGroup" {
    default = "devops-hw14-builder-sg"
 }

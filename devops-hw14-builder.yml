@@ -1,0 +1,14 @@
+# cloud-config
+---
+version: v1
+packages_update: true
+packages_upgrade: true
+
+packages:
+  - git
+  - default-jre
+  - maven
+
+runcmd:
+  - mkdir -p ${dir}
+  - git clone ${repo} ${dir}
