@@ -15,10 +15,6 @@ resource "local_file" "ssh_key-keyfile" {
 
 data "template_file" "builder_data" {
   template = file(var.dataFile)
-  vars = {
-      repo = "${var.gitRepo}"
-      dir = "${var.workingDir}"
-  }
 }
 
 # create ec2 key
