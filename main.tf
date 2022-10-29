@@ -9,6 +9,7 @@ resource "tls_private_key" "ssh_key" {
 # save ssh key
 resource "local_file" "ssh_key-keyfile" {
   filename = var.keyFile
+  file_permission = "0400"
   content = tls_private_key.ssh_key.private_key_openssh
 }
 
