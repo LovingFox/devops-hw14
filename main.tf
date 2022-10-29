@@ -54,5 +54,4 @@ resource "aws_instance" "linux_instance" {
   }
 }
 
-
 # end of main.tf
