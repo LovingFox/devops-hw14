@@ -1,10 +1,14 @@
 # cloud-config
 ---
+version: v1
+packages_update: true
+packages_upgrade: true
+
 packages:
   - git
   - default-jre
   - maven
 
 runcmd:
-  - mkdir -p repo
-  - git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git repo
+  - mkdir -p ${dir}
+  - git clone ${repo} ${dir}
