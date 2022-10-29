@@ -13,6 +13,7 @@ resource "local_file" "ssh_key-keyfile" {
   content = tls_private_key.ssh_key.private_key_openssh
 }
 
+# cloud init template
 data "template_file" "builder_data" {
   template = file(var.dataFile)
   vars = {
@@ -51,7 +52,7 @@ resource "aws_security_group" "aws_sg_ssh" {
 resource "aws_instance" "linux_instance" {
   ami                        = var.ami
   instance_type              = var.instanceType 
-  key_name                   = var.keyName
+  key_name                   = aws_key_pair.aws_key.key_name
   vpc_security_group_ids     = [ aws_security_group.aws_sg_ssh.id ]
   user_data                  = data.template_file.builder_data.rendered
   count                      = 1
