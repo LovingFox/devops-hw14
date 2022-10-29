@@ -1,6 +1,6 @@
 # main.tf
 
-resource "tls_private_key" var.keyName {
+resource "tls_private_key" "${var.keyName}" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
