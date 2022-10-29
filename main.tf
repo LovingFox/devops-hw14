@@ -1,16 +1,25 @@
 # main.tf
 
+# create ssh key
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
+# save ssh key
 resource "local_file" "ssh_key-keyfile" {
   filename = var.keyFile
   content = tls_private_key.ssh_key.private_key_openssh
 }
 
-resource "aws_security_group" "sg_ssh" {
+# create ec2 key
+resource "aws_key_pair" "aws_key" {
+  key_name   = var.keyName
+  public_key = tls_private_key.ssh_key.tls_private_key.ssh_key.
+}
+
+# create ec2 instance
+resource "aws_security_group" "aws_sg_ssh" {
   name = var.securityGroup
   description = "[Terraform] Allow SSH traffic"
 
@@ -28,5 +37,6 @@ resource "aws_security_group" "sg_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
 # end of main.tf
