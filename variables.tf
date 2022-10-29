@@ -36,6 +36,10 @@ variable "dataFile" {
    default = "./devops-hw14-builder.yml"
 }
 
+# variable "setupFile" {
+#    default = "./devops-hw14-builder.sh"
+# }
+
 variable "gitRepo" {
    default = "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
 }

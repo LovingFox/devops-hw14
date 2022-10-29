@@ -14,11 +14,23 @@ resource "local_file" "ssh_key-keyfile" {
 }
 
 # cloud init template
-data "template_file" "builder_data" {
+data "template_file" "builder_script" {
   template = file(var.dataFile)
   vars = {
       repo = "${var.gitRepo}"
       dir = "${var.workingDir}"
+  }
+}
+
+# cloud init config
+data "template_cloudinit_config" "builder_config" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.builder_script.rendered}"
   }
 }
 
@@ -40,10 +52,17 @@ resource "aws_security_group" "aws_sg_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -54,7 +73,8 @@ resource "aws_instance" "linux_instance" {
   instance_type              = var.instanceType 
   key_name                   = aws_key_pair.aws_key.key_name
   vpc_security_group_ids     = [ aws_security_group.aws_sg_ssh.id ]
-  user_data                  = data.template_file.builder_data.rendered
+  # user_data                  = data.template_file.builder_data.rendered
+  user_data_base64           = "${data.template_cloudinit_config.builder_config.rendered}"
   count                      = 1
   
   tags = {
@@ -64,6 +84,17 @@ resource "aws_instance" "linux_instance" {
   volume_tags = {
     Name = var.instanceName
   }
+
+  # connection {
+  #   type        = "ssh"
+  #   user        = "ubuntu"
+  #   private_key = file(var.keyFile)
+  #   host        = self.public_ip
+  # }
+  # provisioner "file" {
+  #   source      = "${var.setupFile}"
+  #   destination = "${var.setupFile}"
+  # }
 }
 
 # end of main.tf
