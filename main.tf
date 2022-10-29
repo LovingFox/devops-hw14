@@ -1,13 +1,13 @@
 # main.tf
 
-resource "tls_private_key" "${var.keyName}" {
+resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "local_file" "${var.keyName}-keyfile" {
+resource "local_file" "ssh_key-keyfile" {
   filename = var.keyFile
-  content = "${tls_private_key.${var.keyName}.private_key_openssh}"
+  content = tls_private_key.ssh_key.private_key_openssh
 }
 
 # end of main.tf
