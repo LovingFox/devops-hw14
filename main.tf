@@ -14,13 +14,13 @@ resource "local_file" "ssh_key-keyfile" {
 
 # create ec2 key
 resource "aws_key_pair" "aws_key" {
-  key_name   = "${var.keyName}"
+  key_name   = var.keyName
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
 # create ec2 security group
 resource "aws_security_group" "aws_sg_ssh" {
-  name = "${var.securityGroup}"
+  name = var.securityGroup
   description = "[Terraform] Allow SSH traffic"
 
   ingress {

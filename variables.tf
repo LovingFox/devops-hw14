@@ -33,7 +33,7 @@ variable "keyFile" {
 }
 
 variable "securityGroup" {
-   default = "sg-devops-hw14-builder"
+   default = "devops-hw14-builder-sg"
 }
 
 # Ubuntu 22.04
