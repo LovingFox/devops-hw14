@@ -18,7 +18,7 @@ resource "aws_key_pair" "aws_key" {
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
-# create ec2 instance
+# create ec2 security group
 resource "aws_security_group" "aws_sg_ssh" {
   name = var.securityGroup
   description = "[Terraform] Allow SSH traffic"
@@ -35,6 +35,22 @@ resource "aws_security_group" "aws_sg_ssh" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# create ec2 instance
+resource "aws_instance" "linux_instance" {
+  ami             = var.ami
+  instance_type   = var.instanceType 
+  security_groups = aws_security_group.aws_sg_ssh
+  key_name        = aws_key_pair.aws_key
+  
+  tags = {
+    Name = var.instanceName
+  }
+
+  volume_tags = {
+    Name = var.instanceName
   }
 }
 
