@@ -15,7 +15,7 @@ resource "local_file" "ssh_key-keyfile" {
 
 data "template_file" "builder_data" {
   template = file(var.dataFile)
-  var = {
+  vars = {
       repo = "${var.gitRepo}"
       dir = "${var.workingDir}"
   }
