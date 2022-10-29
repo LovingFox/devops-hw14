@@ -42,7 +42,7 @@ resource "aws_security_group" "aws_sg_ssh" {
 resource "aws_instance" "linux_instance" {
   ami             = var.ami
   instance_type   = var.instanceType 
-  security_groups = aws_security_group.aws_sg_ssh.name
+  vpc_security_group_ids = [aws_security_group.aws_sg_ssh.id]
   key_name        = aws_key_pair.aws_key
   
   tags = {
