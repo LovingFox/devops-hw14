@@ -45,7 +45,7 @@ variable "gitRepo" {
 }
 
 variable "workingDir" {
-   default = "repo"
+   default = "/repo"
 }
 
 variable "securityGroup" {

@@ -12,3 +12,5 @@ packages:
 runcmd:
   - mkdir -p ${dir}
   - git clone ${repo} ${dir}
+  - cd ${dir}
+  - mvn clean package
