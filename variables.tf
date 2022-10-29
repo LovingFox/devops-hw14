@@ -25,15 +25,15 @@ variable "instanceName" {
 }
 
 variable "keyName" {
-   default = "${var.instanceName}-key"
+   default = "devops-hw14-builder-key"
 }
 
 variable "keyFile" {
-   default = "./${var.instanceName}.key"
+   default = "./devops-hw14-builder.key"
 }
 
 variable "securityGroup" {
-   default = "sg-${var.InstanceName}"
+   default = "sg-devops-hw14-builder"
 }
 
 # Ubuntu 22.04
