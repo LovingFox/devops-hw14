@@ -13,13 +13,13 @@ resource "local_file" "ssh_key-keyfile" {
   content = tls_private_key.ssh_key.private_key_openssh
 }
 
-# data "template_file" "builder_data" {
-#   template = file(var.dataFile)
-#   vars = {
-#       repo = "${var.gitRepo}"
-#       dir = "${var.workingDir}"
-#   }
-# }
+data "template_file" "builder_data" {
+  template = file(var.dataFile)
+  vars = {
+      repo = "${var.gitRepo}"
+      dir = "${var.workingDir}"
+  }
+}
 
 # create ec2 key
 resource "aws_key_pair" "aws_key" {
@@ -53,14 +53,8 @@ resource "aws_instance" "linux_instance" {
   instance_type              = var.instanceType 
   key_name                   = var.keyName
   vpc_security_group_ids     = [ aws_security_group.aws_sg_ssh.id ]
-  # user_data                  = data.template_file.builder_data.rendered
-  user_data = <<EOF
-  sudo apt-get update
-  sudo apt-get install -y default-jre maven git
-  git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git repo
-  cd repo
-  mvn clean package
-  EOF
+  user_data                  = data.template_file.builder_data.rendered
+  count                      = 1
   
   tags = {
     Name = var.instanceName
