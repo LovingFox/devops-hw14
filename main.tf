@@ -1,5 +1,6 @@
 # main.tf
 
+######
 # create ssh key
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
@@ -13,6 +14,14 @@ resource "local_file" "ssh_key-keyfile" {
   content = tls_private_key.ssh_key.private_key_openssh
 }
 
+# create ec2 key
+resource "aws_key_pair" "aws_key" {
+  key_name   = var.keyName
+  public_key = tls_private_key.ssh_key.public_key_openssh
+}
+######
+
+######
 # cloud init template
 data "template_file" "builder_script" {
   template = file(var.dataFile)
@@ -33,13 +42,9 @@ data "template_cloudinit_config" "builder_config" {
     content      = "${data.template_file.builder_script.rendered}"
   }
 }
+######
 
-# create ec2 key
-resource "aws_key_pair" "aws_key" {
-  key_name   = var.keyName
-  public_key = tls_private_key.ssh_key.public_key_openssh
-}
-
+######
 # create ec2 security group
 resource "aws_security_group" "aws_sg_ssh" {
   name = var.securityGroup
@@ -66,6 +71,44 @@ resource "aws_security_group" "aws_sg_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+######
+
+######
+# iam role
+resource "aws_iam_role" "iam_role" {
+  name_prefix        = "${var.instanceName}-"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+# iam instance profile
+resource "aws_iam_instance_profile" "iam_inst_prof" {
+  name_prefix        = "${var.instanceName}-"
+  role = aws_iam_role.role.name
+}
+
+# iam role policy attachments
+resource "aws_iam_role_policy_attachment" "iam_role_pol_att" {
+  foreach = teset([
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+  ])
+  role       = aws_iam_role.role.name
+  policy_arn = each.value
+}
+# iam end
+######
 
 # create ec2 instance
 resource "aws_instance" "linux_instance" {
@@ -73,8 +116,8 @@ resource "aws_instance" "linux_instance" {
   instance_type              = var.instanceType 
   key_name                   = aws_key_pair.aws_key.key_name
   vpc_security_group_ids     = [ aws_security_group.aws_sg_ssh.id ]
-  # user_data                  = data.template_file.builder_data.rendered
   user_data_base64           = "${data.template_cloudinit_config.builder_config.rendered}"
+  iam_instance_profile       = aws_iam_instance_profile.iam_inst_prof.name
   count                      = 1
   
   tags = {
@@ -84,17 +127,6 @@ resource "aws_instance" "linux_instance" {
   volume_tags = {
     Name = var.instanceName
   }
-
-  # connection {
-  #   type        = "ssh"
-  #   user        = "ubuntu"
-  #   private_key = file(var.keyFile)
-  #   host        = self.public_ip
-  # }
-  # provisioner "file" {
-  #   source      = "${var.setupFile}"
-  #   destination = "${var.setupFile}"
-  # }
 }
 
 # end of main.tf
