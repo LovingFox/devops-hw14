@@ -44,7 +44,7 @@ data "template_file" "builder_script" {
   vars = {
       repo    = "${var.gitRepo}"
       dir     = "${var.workingDir}"
-      bucket  = "${aws_s3_bucket.s3_bucket.name}"
+      bucket  = "${aws_s3_bucket.s3_bucket.bucket_domain_name}"
   }
 }
 
