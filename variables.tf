@@ -8,6 +8,10 @@ variable "secret_key" {
    default = "<PUT IN YOUR AWS SECRET KEY or use 'export TF_VAR_secret_key='>"
 }
 
+variable "projectName" {
+   default = "devops-hw14"
+}
+
 variable "region" {
    default = "eu-central-1"
 }
@@ -16,29 +20,40 @@ variable "bucketName" {
    default = "devops-hw14-bucket"
 }
 
+variable "bucketFileName" {
+   default = "ROOT.war"
+}
+
 variable "instanceType" {
    default = "t2.micro"
 }
 
-variable "instanceName" {
-   default = "devops-hw14-builder"
+# Ubuntu 22.04
+variable "ami" {
+   default = "ami-0caef02b518350c8b"
 }
 
 variable "keyName" {
-   default = "devops-hw14-builder-key"
+   default = "devops-hw14-key"
 }
 
 variable "keyFile" {
-   default = "./devops-hw14-builder.key"
+   default = "./devops-hw14.key"
 }
 
-variable "dataFile" {
+#####################
+# builder vars
+variable "instanceNameBuilder" {
+   default = "devops-hw14-builder"
+}
+
+variable "securityGroupBuilder" {
+   default = "devops-hw14-builder-sg"
+}
+
+variable "dataFileBuilder" {
    default = "./devops-hw14-builder.yml"
 }
-
-# variable "setupFile" {
-#    default = "./devops-hw14-builder.sh"
-# }
 
 variable "gitRepo" {
    default = "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
@@ -46,15 +61,6 @@ variable "gitRepo" {
 
 variable "workingDir" {
    default = "/repo"
-}
-
-variable "securityGroup" {
-   default = "devops-hw14-builder-sg"
-}
-
-# Ubuntu 22.04
-variable "ami" {
-   default = "ami-0caef02b518350c8b"
 }
 
 # end of variables.tf

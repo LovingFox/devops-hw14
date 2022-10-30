@@ -15,4 +15,4 @@ runcmd:
   - git clone ${repo} ${dir}
   - cd ${dir}
   - mvn clean package
-  - aws s3 cp ${dir}/target/*.war s3://${bucket}/ROOT.war
+  - aws s3 cp ${dir}/target/*.war s3://${bucket}/${file}

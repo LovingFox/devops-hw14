@@ -38,17 +38,18 @@ resource "aws_key_pair" "aws_key" {
 ######
 
 ######
-# cloud init template
+# cloud builder init template
 data "template_file" "builder_script" {
-  template = file(var.dataFile)
+  template = file(var.dataFileBuilder)
   vars = {
       repo    = "${var.gitRepo}"
       dir     = "${var.workingDir}"
+      file    = "${var.bucketName}"
       bucket  = "${aws_s3_bucket.s3_bucket.bucket}"
   }
 }
 
-# cloud init config
+# cloud builder init config
 data "template_cloudinit_config" "builder_config" {
   gzip          = true
   base64_encode = true
@@ -62,10 +63,10 @@ data "template_cloudinit_config" "builder_config" {
 ######
 
 ######
-# create ec2 security group
-resource "aws_security_group" "aws_sg_ssh" {
+# create ec2 builder security group
+resource "aws_security_group" "sg_builder" {
   name = var.securityGroup
-  description = "[Terraform] Allow SSH traffic"
+  description = "[Terraform] Builder ACL"
 
   ingress {
     from_port   = 22
@@ -93,7 +94,7 @@ resource "aws_security_group" "aws_sg_ssh" {
 ######
 # iam role
 resource "aws_iam_role" "iam_role" {
-  name_prefix        = "${var.instanceName}-"
+  name_prefix        = "${var.projectName}-"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -111,14 +112,13 @@ resource "aws_iam_role" "iam_role" {
 
 # iam instance profile
 resource "aws_iam_instance_profile" "iam_inst_prof" {
-  name_prefix        = "${var.instanceName}-"
+  name_prefix        = "${var.projectName}-"
   role = aws_iam_role.iam_role.name
 }
 
 # iam role policy attachments
 resource "aws_iam_role_policy_attachment" "iam_role_pol_att" {
   for_each = toset([
-    # "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
     "arn:aws:iam::aws:policy/AmazonS3FullAccess"
   ])
   role       = aws_iam_role.iam_role.name
@@ -127,22 +127,22 @@ resource "aws_iam_role_policy_attachment" "iam_role_pol_att" {
 # iam end
 ######
 
-# create ec2 instance
-resource "aws_instance" "linux_instance" {
+# create ec2 builder instance
+resource "aws_instance" "builder_instance" {
   ami                        = var.ami
   instance_type              = var.instanceType 
   key_name                   = aws_key_pair.aws_key.key_name
-  vpc_security_group_ids     = [ aws_security_group.aws_sg_ssh.id ]
+  vpc_security_group_ids     = [ aws_security_group.sg_builder.id ]
   user_data_base64           = "${data.template_cloudinit_config.builder_config.rendered}"
   iam_instance_profile       = aws_iam_instance_profile.iam_inst_prof.name
   count                      = 1
   
   tags = {
-    Name = var.instanceName
+    Name = var.instanceNameBuilder
   }
 
   volume_tags = {
-    Name = var.instanceName
+    Name = var.instanceNameBuilder
   }
 }
 
