@@ -65,7 +65,7 @@ data "template_cloudinit_config" "builder_config" {
 ######
 # create ec2 builder security group
 resource "aws_security_group" "sg_builder" {
-  name = var.securityGroup
+  name = var.securityGroupBuilder
   description = "[Terraform] Builder ACL"
 
   ingress {
@@ -135,7 +135,6 @@ resource "aws_instance" "builder_instance" {
   vpc_security_group_ids     = [ aws_security_group.sg_builder.id ]
   user_data_base64           = "${data.template_cloudinit_config.builder_config.rendered}"
   iam_instance_profile       = aws_iam_instance_profile.iam_inst_prof.name
-  count                      = 1
   
   tags = {
     Name = var.instanceNameBuilder
