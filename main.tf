@@ -95,7 +95,7 @@ resource "aws_iam_role" "iam_role" {
 # iam instance profile
 resource "aws_iam_instance_profile" "iam_inst_prof" {
   name_prefix        = "${var.instanceName}-"
-  role = aws_iam_role.role.name
+  role = aws_iam_role.iam_role.name
 }
 
 # iam role policy attachments
@@ -104,7 +104,7 @@ resource "aws_iam_role_policy_attachment" "iam_role_pol_att" {
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
   ])
-  role       = aws_iam_role.role.name
+  role       = aws_iam_role.iam_role.name
   policy_arn = each.value
 }
 # iam end
