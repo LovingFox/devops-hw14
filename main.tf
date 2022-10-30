@@ -44,7 +44,7 @@ data "template_file" "builder_script" {
   vars = {
       repo    = "${var.gitRepo}"
       dir     = "${var.workingDir}"
-      file    = "${var.bucketName}"
+      file    = "${var.bucketFileName}"
       bucket  = "${aws_s3_bucket.s3_bucket.bucket}"
   }
 }
@@ -63,6 +63,31 @@ data "template_cloudinit_config" "builder_config" {
 ######
 
 ######
+# cloud webserver init template
+data "template_file" "webserver_script" {
+  template = file(var.dataFileWebserver)
+  vars = {
+      webroot = "${var.webRoot}"
+      webdir  = "${var.webDir}"
+      file    = "${var.bucketFileName}"
+      bucket  = "${aws_s3_bucket.s3_bucket.bucket}"
+  }
+}
+
+# cloud webserver init config
+data "template_cloudinit_config" "webserver_config" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.webserver_script.rendered}"
+  }
+}
+######
+
+######
 # create ec2 builder security group
 resource "aws_security_group" "sg_builder" {
   name = var.securityGroupBuilder
@@ -71,6 +96,42 @@ resource "aws_security_group" "sg_builder" {
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+######
+
+######
+# create ec2 webserver security group
+resource "aws_security_group" "sg_webserver" {
+  name = var.securityGroupWebserver
+  description = "[Terraform] Webserver ACL"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -130,18 +191,36 @@ resource "aws_iam_role_policy_attachment" "iam_role_pol_att" {
 # create ec2 builder instance
 resource "aws_instance" "builder_instance" {
   ami                        = var.ami
-  instance_type              = var.instanceType 
+  instance_type              = var.instanceType
   key_name                   = aws_key_pair.aws_key.key_name
   vpc_security_group_ids     = [ aws_security_group.sg_builder.id ]
   user_data_base64           = "${data.template_cloudinit_config.builder_config.rendered}"
   iam_instance_profile       = aws_iam_instance_profile.iam_inst_prof.name
-  
+
   tags = {
     Name = var.instanceNameBuilder
   }
 
   volume_tags = {
     Name = var.instanceNameBuilder
+  }
+}
+
+# create ec2 webserver instance
+resource "aws_instance" "webserver_instance" {
+  ami                        = var.ami
+  instance_type              = var.instanceType
+  key_name                   = aws_key_pair.aws_key.key_name
+  vpc_security_group_ids     = [ aws_security_group.sg_webserver.id ]
+  user_data_base64           = "${data.template_cloudinit_config.webserver_config.rendered}"
+  iam_instance_profile       = aws_iam_instance_profile.iam_inst_prof.name
+
+  tags = {
+    Name = var.instanceNameWebserver
+  }
+
+  volume_tags = {
+    Name = var.instanceNameWebserver
   }
 }
 

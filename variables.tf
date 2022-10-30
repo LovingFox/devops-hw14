@@ -21,7 +21,7 @@ variable "bucketName" {
 }
 
 variable "bucketFileName" {
-   default = "ROOT.war"
+   default = "artifact.war"
 }
 
 variable "instanceType" {
@@ -61,6 +61,28 @@ variable "gitRepo" {
 
 variable "workingDir" {
    default = "/repo"
+}
+
+#####################
+# webserver vars
+variable "instanceNameWebserver" {
+   default = "devops-hw14-webserver"
+}
+
+variable "securityGroupWebserver" {
+   default = "devops-hw14-webserver-sg"
+}
+
+variable "dataFileBuilder" {
+   default = "./devops-hw14-webserver.yml"
+}
+
+variable "webDir" {
+   default = "/var/lib/tomcat9/webapps"
+}
+
+variable "webRoot" {
+   default = "ROOT"
 }
 
 # end of variables.tf

@@ -1,4 +1,4 @@
-# cloud-config
+# cloud-config builder
 ---
 version: v1
 packages_update: true

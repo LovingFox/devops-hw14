@@ -1,0 +1,16 @@
+# cloud-config webserver
+---
+version: v1
+packages_update: true
+packages_upgrade: true
+
+packages:
+  - tomcat9
+  - awscli
+
+runcmd:
+  - echo ===== Sleeping 120 sec =====
+  - sleep 120
+  - aws s3 cp s3://${bucket}/${file} ${webdir}/${webroot}.war
+  - aws s3 rm s3://${bucket}/${file}
+  - rm -rf ${webdir}/${webroot}/
