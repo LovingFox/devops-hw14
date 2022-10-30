@@ -20,15 +20,15 @@ Simple Tomcat application based on the test project:
 1. Create Security groups, ssh key
 1. Create EC2 instances for Builder and Webserver with IAM profile, ssh key and Security groups
 1. Builder cloud-init:  
-  - install maven, jdk and awscli
-  - pull git repo
-  - build an artifact by maven
-  - copy the artifact to the S3 bucket
+   - install maven, jdk and awscli
+   - pull git repo
+   - build an artifact by maven
+   - copy the artifact to the S3 bucket
 1. Wbeserver cloud-init:  
-  - install tomcat9
-  - wait until an artifact is ready
-  - copy the artifact to the tomcat webdir
-  - remove the artifact from S3 bucket
+   - install tomcat9
+   - wait until an artifact is ready
+   - copy the artifact to the tomcat webdir
+   - remove the artifact from S3 bucket
 
 The key file (devops-hw14.key) is created locally to access instances via ssh. This is optionally, not necessary to deploy, just for the access to instances.
 
