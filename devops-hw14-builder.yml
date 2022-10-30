@@ -8,6 +8,7 @@ packages:
   - git
   - default-jre
   - maven
+  - awscli
 
 runcmd:
   - mkdir -p ${dir}
