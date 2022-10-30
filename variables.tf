@@ -73,7 +73,7 @@ variable "securityGroupWebserver" {
    default = "devops-hw14-webserver-sg"
 }
 
-variable "dataFileBuilder" {
+variable "dataFileWebserver" {
    default = "./devops-hw14-webserver.yml"
 }
 
