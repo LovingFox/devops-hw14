@@ -1,6 +1,14 @@
 # main.tf
 
 ######
+# bucket
+resource "aws_s3_bucket" "s3_bucket" {
+    bucket = "${var.bucketName}" 
+    acl = "private"   
+}
+######
+
+######
 # create ssh key
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
@@ -26,8 +34,9 @@ resource "aws_key_pair" "aws_key" {
 data "template_file" "builder_script" {
   template = file(var.dataFile)
   vars = {
-      repo = "${var.gitRepo}"
-      dir = "${var.workingDir}"
+      repo    = "${var.gitRepo}"
+      dir     = "${var.workingDir}"
+      bucket  = "${aws_s3_bucket.s3_bucket.name}"
   }
 }
 

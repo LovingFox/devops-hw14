@@ -12,8 +12,8 @@ variable "region" {
    default = "eu-central-1"
 }
 
-variable "availabilityZone" {
-   default = "eu-central-1a"
+variable "bucketName" {
+   default = "devops-hw14-bucket"
 }
 
 variable "instanceType" {
