@@ -9,8 +9,8 @@ packages:
   - awscli
 
 runcmd:
-  - echo ===== Sleeping 120 sec =====
-  - sleep 120
+  - echo ===== Waiting an artifcat s3://${bucket}/${file} =====
+  - while true; do sleep 5; aws s3 ls s3://${bucket}/${file}; [ "$?" -eq 1 ] || break; done
   - aws s3 cp s3://${bucket}/${file} ${webdir}/${webroot}.war
   - aws s3 rm s3://${bucket}/${file}
   - rm -rf ${webdir}/${webroot}/
