@@ -8,9 +8,19 @@ packages:
   - tomcat9
   - awscli
 
+write_files:
+  - path: /get_artifact.sh
+    permissions: 0744
+    owner: root
+    content: |
+      while true; do
+      sleep 5
+      aws s3 ls s3://${bucket}/${file}
+      [ "$?" -eq 1 ] || break
+      done
 runcmd:
   - echo ===== Waiting an artifcat s3://${bucket}/${file} =====
-  - while true; do sleep 5; aws s3 ls s3://${bucket}/${file}; [ "$?" -eq 1 ] || break; done
+  - bash /get_artifact.sh
   - aws s3 cp s3://${bucket}/${file} ${webdir}/${webroot}.war
   - aws s3 rm s3://${bucket}/${file}
   - rm -rf ${webdir}/${webroot}/
