@@ -17,11 +17,20 @@ Simple Tomcat application based on the test project:
 
 1. Create S3 bucket
 1. Create IAM role/policy/profile to access S3 (AmazonS3FullAccess)
-1. Create EC2 instances for Builder and Webserver
-1. Builder install maven, pull git repo, build an artifact and puch it to the S3 bucket
-1. Wbeserver install tomcat9 and wait until an artifact is ready, next Webserver pull it to the tomcat webdir and remove the artifact from S3 bucket
+1. Create Security groups, ssh key
+1. Create EC2 instances for Builder and Webserver with IAM profile, ssh key and Security groups
+1. Builder cloud-init:  
+  - install maven, jdk and awscli
+  - pull git repo
+  - build an artifact by maven
+  - copy the artifact to the S3 bucket
+1. Wbeserver cloud-init:  
+  - install tomcat9
+  - wait until an artifact is ready
+  - copy the artifact to the tomcat webdir
+  - remove the artifact from S3 bucket
 
-Additionally a key file (devops-hw14.key) is created locally to access instances via ssh.
+The key file (devops-hw14.key) is created locally to access instances via ssh. This is optionally, not necessary to deploy, just for the access to instances.
 
 > Deploy process adds all necessary objects in AWS  
 > Destroy process deletes all objects that created at Deploy
