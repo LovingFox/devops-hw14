@@ -100,7 +100,7 @@ resource "aws_iam_instance_profile" "iam_inst_prof" {
 
 # iam role policy attachments
 resource "aws_iam_role_policy_attachment" "iam_role_pol_att" {
-  for_each = teset([
+  for_each = toset([
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
   ])
