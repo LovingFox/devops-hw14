@@ -21,6 +21,9 @@ Simple Tomcat application based on the test project:
 1. Builder install maven, pull git repo, build an artifact and puch it to the S3 bucket
 1. Wbeserver install tomcat9 and wait until an artifact is ready, next Webserver pull it to the tomcat webdir and remove the artifact from S3 bucket
 
+> Deploy process adds all necessary objects in AWS  
+> Destroy process deletes all objects that created at Deploy
+
 ##### Usage
 
 1. Download repository
