@@ -3,7 +3,7 @@
 ######
 # bucket
 resource "aws_s3_bucket" "s3_bucket" {
-    bucket = "${var.bucketName}"
+    bucket_prefix = "${var.bucketName}-"
     tags = {
         Name = "${var.bucketName}"
     }
@@ -44,7 +44,7 @@ data "template_file" "builder_script" {
   vars = {
       repo    = "${var.gitRepo}"
       dir     = "${var.workingDir}"
-      bucket  = "${var.bucketName}"
+      bucket  = "${aws_s3_bucket.s3_bucket.bucket}"
   }
 }
 
