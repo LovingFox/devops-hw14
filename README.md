@@ -6,14 +6,14 @@ Simple Tomcat application based on the test project:
 
 [https://github.com/LovingFox/boxfuse-sample-java-war-hello.git](https://github.com/LovingFox/boxfuse-sample-java-war-hello.git)
 
-##### Files
+#### Files
 
 1. *main.tf* (main Terraform config)
 1. *.tf* (other Terraform files)
 1. *devops-hw14-builder.yml* (Builder cloud-init config)
 1. *devops-hw14-webserver.yml* (Webserver cloud-init config)
 
-##### Logic of the provisioning
+#### Logic of the provisioning
 
 1. Create S3 bucket
 1. Create IAM role/policy/profile to access S3 (AmazonS3FullAccess)
@@ -24,7 +24,7 @@ Simple Tomcat application based on the test project:
 > Deploy process adds all necessary objects in AWS  
 > Destroy process deletes all objects that created at Deploy
 
-##### Usage
+#### Usage
 
 1. Download repository
 
