@@ -71,6 +71,9 @@ The key file (devops-hw14.key) is created locally to access instances via ssh. T
     ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
         -i ./devops-hw14.key \
         ubuntu@$(terraform output -raw builder_dns_name)
+
+    # check the Builder is working
+    journalctl -f
     ```
 
     to the Webserver
@@ -79,4 +82,14 @@ The key file (devops-hw14.key) is created locally to access instances via ssh. T
     ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
         -i ./devops-hw14.key \
         ubuntu@$(terraform output -raw webserver_dns_name)
+
+    # check the Webserver is waiting for the artifact is ready
+    # and will start it
+    journalctl -f
+    ```
+
+1. Check that the application is working
+
+    ```bash
+    curl http://$(terraform output -raw webserver_dns_name):8080
     ```
