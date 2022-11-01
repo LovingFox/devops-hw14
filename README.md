@@ -57,12 +57,6 @@ The key file (devops-hw14.key) is created locally to access instances via ssh. T
     terraform apply
     ```
 
-1. Destroy
-
-    ```bash
-    terraform destroy
-    ```
-
 1. (Optional) Access to instances
 
     to the Builder
@@ -92,4 +86,10 @@ The key file (devops-hw14.key) is created locally to access instances via ssh. T
 
     ```bash
     curl http://$(terraform output -raw webserver_dns_name):8080
+    ```
+
+1. Destroy
+
+    ```bash
+    terraform destroy
     ```
